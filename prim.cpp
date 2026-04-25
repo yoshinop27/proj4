@@ -15,6 +15,9 @@ using namespace std;
 
 /*
  * getMin
+ * Input: Cost vector, Visited vector
+ * Return: Minimum vertex index
+ * Scan the vector and select the minimum cost vertice that hasnt been visited yet
  */
 int getMin(vector<double> &cost, vector<bool> &visited) {
   double minCost = INFINITY;
@@ -31,6 +34,9 @@ int getMin(vector<double> &cost, vector<bool> &visited) {
 
 /*
  * isEmpty
+ * Input: visited vector
+ * Return: boolean if empty or not
+ * Scan the vector to see if there are any unvisited
  */
 bool isEmpty(vector<bool> &visited) {
   for (int i = 0; i < visited.size(); i++) {
@@ -43,6 +49,10 @@ bool isEmpty(vector<bool> &visited) {
 
 /*
  * prim
+ * Input: Adjacency List, Adjacency Matrix
+ * Return: vector of edges denoting MST
+ * Start with a vertex, denote this as our tree. We then add the minimum edge that branches outwards from our tree. 
+ * Repeat this process until we have a spanning tree.
  */
 vector<Edge> prim(vector<Vertex> &adjList, vector<double> &adjMat) {
   // Initialize the empty MST.

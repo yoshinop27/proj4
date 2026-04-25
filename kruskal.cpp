@@ -15,12 +15,20 @@ using namespace std;
 
 /*
  * find
+ * Input: vertex label, parent vector
+ * Return: int representing parent vertex label
+ * Search the parent vector recursively until we find a vertex that is their own parent. 
+ * This is the reprsentative of the component that v is in. Once the representative is found, 
+ * assign that as the parent to each searched vertex (path compression)
  */
 int find(int v, vector<int> &pi) {
+    // It's a representative immediately return
     if (v == pi[v]) {
         return v;
     } else {
+        // Find the representative of the parent
         int rep = find(pi[v], pi);
+        // Assign the representative of it's component as the parent
         pi[v] = rep;
         return rep;
     }
@@ -28,26 +36,30 @@ int find(int v, vector<int> &pi) {
 
 /*
  * union_by_rank
+ * Input: vertices from components being unioned, vector of ranks, vector of parents
+ * Depending on the ranks of components being added, union the components and update the ranks if needed. 
  */
 void union_by_rank(int u, int v, vector<int> &rank, vector<int> &pi) {
-    if(rank[u] == rank[v]) {
-        rank[u]++;
-        int rep_v = find(v, pi);
-        int rep_u = find(u, pi);
+    // Find representatives of vertexes being unioned
+    int rep_v = find(v, pi);
+    int rep_u = find(u, pi);
+    // Cases based on ranks of representatives
+    if(rank[rep_u] == rank[rep_v]) {
+        rank[rep_u]++;
         pi[rep_v] = rep_u;
-    } else if (rank[u] < rank[v]){
-        int rep_v = find(v, pi);
-        int rep_u = find(u, pi);
+    } else if (rank[rep_u] < rank[rep_v]){
         pi[rep_u] = rep_v;
     } else {
-        int rep_v = find(v, pi);
-        int rep_u = find(u, pi);
         pi[rep_v] = rep_u;
     }
 }
 
 /*
  * kruskal
+ * Input: adjacency list, edge list
+ * Return: Minimum spanning tree
+ * Starts with all vertices as seperate forests. Select the minimum edge that lies in seperate components. Adds that edge
+ * then unions the components. Repeats until we have a spanning tree
  */
 vector<Edge> kruskal(vector<Vertex> &adjList, vector<Edge> &edgeList) {
     // Initialize the empty MST.
