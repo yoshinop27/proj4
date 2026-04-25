@@ -14,7 +14,7 @@ CXX	=	clang
 TARGETS =	runTests
 OBJECTS =	runTests.cpp prim.cpp kruskal.cpp tsp.cpp Edge.cpp Vertex.cpp
 REMOVE =	runTests.o prim.o kruskal.o tsp.o Edge.o Vertex.o
-LINKS =	-std=c++2a -lstdc++ -lm
+LINKS =	-std=c++2a -lstdc++ -lm -g
 INCLUDE = 
 
 # ----- Make Rules -----

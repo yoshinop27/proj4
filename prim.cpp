@@ -17,67 +17,71 @@ using namespace std;
  * getMin
  */
 int getMin(vector<double> &cost, vector<bool> &visited) {
-    int minCost = INFINITY;
-    int minCostIdx = -1;
-    // Find the unvisited vertex with the smallest cost
-    for (int i = 0; i < cost.size(); i++) {
-        if (!visited[i] && minCost > cost[i]) {
-            minCost = cost[i];
-            minCostIdx = i;
-        }
+  double minCost = INFINITY;
+  int minCostIdx = -1;
+  // Find the unvisited vertex with the smallest cost
+  for (int i = 0; i < cost.size(); i++) {
+    if (!visited[i] && minCost > cost[i]) {
+      minCost = cost[i];
+      minCostIdx = i;
     }
-    return minCostIdx;
+  }
+  return minCostIdx;
 }
 
 /*
  * isEmpty
  */
 bool isEmpty(vector<bool> &visited) {
-    for(int i = 0; i < visited.size(); i++) {
-        if(visited[i] == false) {
-            return false;
-        }
+  for (int i = 0; i < visited.size(); i++) {
+    if (visited[i] == false) {
+      return false;
     }
-    return true;
+  }
+  return true;
 }
 
 /*
  * prim
  */
 vector<Edge> prim(vector<Vertex> &adjList, vector<double> &adjMat) {
-    // Initialize the empty MST.
-    vector<Edge> mst;
-    
-    // For each vertex, we need a visited flag, a 'cost' for Prim's, and the
-    // prev values to track the MST. Store these in seperate vectors.
-    int n = adjList.size();
-    vector<bool> visited(n, false);
-    vector<double> cost(n, numeric_limits<double>::infinity());
-    vector<int> prev(n, -1);
+  // Initialize the empty MST.
+  vector<Edge> mst;
 
-    // Set start vertex
-    cost[0] = 0;
-    prev[0] = 0;
+  // For each vertex, we need a visited flag, a 'cost' for Prim's, and the
+  // prev values to track the MST. Store these in seperate vectors.
+  int n = adjList.size();
+  vector<bool> visited(n, false);
+  vector<double> cost(n, numeric_limits<double>::infinity());
+  vector<int> prev(n, -1);
 
-    // Run while the mst is not size n-1
-    for (int k=0; k<n-1; k++) {
+  // Set start vertex
+  cost[0] = 0;
+  prev[0] = 0;
 
-        int vtxLabel = getMin(cost, visited);
-        if (k != 0){
-            Edge e = Edge(adjList[prev[vtxLabel]], adjList[vtxLabel], cost[vtxLabel]);
-            printf("%f", e.weight);
-            //mst.push_back(e);
-        }
-        visited[vtxLabel] = true;
-        for (int i = 0; i<n; i++) {
-            if (cost[i] > adjMat[vtxLabel*n+i]) {
-                cost[i] = adjMat[vtxLabel*n+i]; 
-                prev[i] = vtxLabel;
-            }
-        }
-     }
-    return mst;
-}        
-    
-            
-    
+  // Run while the mst is not size n-1
+  for (int k = 0; k < n; k++) {
+    // Get closest unvisited vertice
+    int vtxLabel = getMin(cost, visited);
+    // Create edges and add to tree
+    if (k != 0) {
+      auto i1 = prev[vtxLabel];
+      auto v1 = adjList[vtxLabel];
+      auto c1 = cost[vtxLabel];
+      auto v2 = adjList[i1];
+      Edge e = Edge(adjList[prev[vtxLabel]], adjList[vtxLabel], cost[vtxLabel]);
+      mst.push_back(e);
+      adjList[vtxLabel].mstNeighbors.push_back(prev[vtxLabel]);
+      adjList[prev[vtxLabel]].mstNeighbors.push_back(vtxLabel);
+    }
+    visited[vtxLabel] = true;
+    // Determine if there's any vertices on the other side of the cut with a lower cost from current vertex
+    for (int i = 0; i < n; i++) {
+      if (cost[i] > adjMat[vtxLabel * n + i]) {
+        cost[i] = adjMat[vtxLabel * n + i];
+        prev[i] = vtxLabel;
+      }
+    }
+  }
+  return mst;
+}
